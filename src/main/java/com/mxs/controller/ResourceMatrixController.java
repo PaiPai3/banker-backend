@@ -1,5 +1,6 @@
 package com.mxs.controller;
 
+import com.mxs.pojo.MatrixShortInfo;
 import com.mxs.pojo.ResourceMatrix;
 import com.mxs.pojo.Result;
 import com.mxs.service.ResourceMatrixService;
@@ -49,8 +50,9 @@ public class ResourceMatrixController {
      */
     @GetMapping("/list")
     public Result list() {
-        List<ResourceMatrix> resourceTableList = resourceMatrixService.list();
-        return Result.success(resourceTableList);
+        log.info("获取全部矩阵");
+        List<MatrixShortInfo> list = resourceMatrixService.list();
+        return Result.success(list);
     }
 
     /*
@@ -66,8 +68,9 @@ public class ResourceMatrixController {
     /*
         加载指定创建时间的矩阵
      */
-    @PostMapping("/load")
+    @GetMapping("/load")
     public Result findByTime(LocalDateTime createTime) {
+        log.info("创建时间{}",createTime);
         ResourceMatrix resourceMatrix = resourceMatrixService.findByTime(createTime);
         return Result.success(resourceMatrix);
     }

@@ -1,11 +1,13 @@
 package com.mxs.service.impl;
 
 import com.mxs.mapper.ResourceMatrixMapper;
+import com.mxs.pojo.MatrixShortInfo;
 import com.mxs.pojo.ResourceMatrix;
 import com.mxs.pojo.ResourceTable;
 import com.mxs.service.ResourceMatrixService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,9 +41,9 @@ public class ResourceMatrixServiceImpl implements ResourceMatrixService {
         根据创建时间获取所有矩阵
      */
     @Override
-    public List<ResourceMatrix> list() {
-        List<ResourceTable> resourceTables = resourceMatrixMapper.list();
-        return resourceTables.stream().map(ResourceTable::toResourceMatrix).toList();
+    public List<MatrixShortInfo> list() {
+        List<MatrixShortInfo> list = resourceMatrixMapper.list();
+        return list;
     }
 
     /*
@@ -57,7 +59,7 @@ public class ResourceMatrixServiceImpl implements ResourceMatrixService {
         加载指定时间的矩阵
      */
     @Override
-    public ResourceMatrix findByTime(LocalDateTime createTime) {
+    public ResourceMatrix findByTime(@RequestParam(value = "createTime") LocalDateTime createTime) {
         ResourceTable resourceTable = resourceMatrixMapper.findByTime(createTime);
         return resourceTable.toResourceMatrix();
     }

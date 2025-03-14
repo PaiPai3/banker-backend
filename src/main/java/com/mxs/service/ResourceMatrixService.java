@@ -1,5 +1,6 @@
 package com.mxs.service;
 
+import com.mxs.pojo.MatrixShortInfo;
 import com.mxs.pojo.ResourceMatrix;
 import com.mxs.pojo.ResourceTable;
 
@@ -11,7 +12,7 @@ public interface ResourceMatrixService {
 
     List<List<Integer>> dispatch(ResourceMatrix resourceMatrix);
 
-    List<ResourceMatrix> list();
+    List<MatrixShortInfo> list();
 
     void save(ResourceMatrix resourceMatrix);
 

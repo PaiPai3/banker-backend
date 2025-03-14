@@ -45,9 +45,7 @@ public class ResourceTable {
         json数组转为一维数组
      */
     private Integer[] stringToInt1DArray(String str) {
-        return Arrays.stream(str
-                .substring(1, str.length() - 1)
-                .split(","))
+        return Arrays.stream(str.substring(1, str.length() - 1).split(", "))
                 .map(Integer::parseInt)
                 .toArray(Integer[]::new);
     }
@@ -57,11 +55,11 @@ public class ResourceTable {
      */
     private Integer[][] stringToInt2DArray(String str) {
         return Arrays.stream(str
-                        .substring(1, str.length() - 1)
-                        .split(","))
+                        .substring(2, str.length() - 2)
+                        .split("], \\["))
+                .map(String::trim)
                 .map(s -> Arrays.stream(s
-                                .substring(1, s.length() - 1)
-                                .split(","))
+                                .split(", "))
                         .map(Integer::parseInt)
                         .toArray(Integer[]::new))
                 .toArray(Integer[][]::new);

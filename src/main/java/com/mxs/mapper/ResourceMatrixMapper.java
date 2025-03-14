@@ -1,5 +1,6 @@
 package com.mxs.mapper;
 
+import com.mxs.pojo.MatrixShortInfo;
 import com.mxs.pojo.ResourceTable;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -21,8 +22,8 @@ public interface ResourceMatrixMapper {
     /*
         获取所有矩阵
      */
-    @Select("select * from resource_table order by create_time desc")
-    List<ResourceTable> list();
+    @Select("select n,m,request_process,create_time from resource_table order by create_time desc")
+    List<MatrixShortInfo> list();
 
     /*
         根据创建时间加载矩阵

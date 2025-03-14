@@ -23,7 +23,10 @@ class BankerAlgorithmApplicationTests {
         System.out.println(Arrays.toString(b));
 
         //将
-        Integer[] newa = Arrays.stream(sa.substring(1, sa.length() - 1).split(",")).map(Integer::parseInt).toArray(Integer[]::new);
+        Integer[] newa = Arrays.stream(sa.substring(1, sa.length() - 1).split(","))
+                .map(String::trim)
+                .map(Integer::parseInt)
+                .toArray(Integer[]::new);
         Integer[][] newb = Arrays.stream(sb.substring(2, sb.length() - 2).split("], \\[")).map(s -> Arrays.stream(s.split(", ")).map(Integer::parseInt).toArray(Integer[]::new)).toArray(Integer[][]::new);
     }
 }

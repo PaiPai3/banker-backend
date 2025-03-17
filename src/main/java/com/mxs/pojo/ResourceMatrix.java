@@ -61,7 +61,7 @@ public class ResourceMatrix {
                 //随机化最大需求
                 max[i][j] = r.nextInt(20, 40);
                 //已分配资源不能超过最大需求资源
-                allocation[i][j] = r.nextInt(0, max[i][j]-10);
+                allocation[i][j] = r.nextInt(0, max[i][j] - 10);
                 //计算需求资源
                 need[i][j] = max[i][j] - allocation[i][j];
             }
@@ -81,7 +81,7 @@ public class ResourceMatrix {
         }
         //查找所有安全序列(安全算法)
         List<List<Integer>> safeList = findAllSafeSequences();
-        log.info("safeList:{}",safeList);
+        log.info("safeList:{}", safeList);
         //根据资源利用效率排序
         RankListByEfficiency(safeList);
         return safeList;
@@ -118,7 +118,7 @@ public class ResourceMatrix {
     }
 
     /*
-     * @Description: 根据资源利用效率排序  //TODO 多提几种算法
+     * @Description: 根据资源利用效率排序
      */
     private void RankListByEfficiency(List<List<Integer>> safeList) {
         // 创建一个列表来存储每个安全序列及其效率
@@ -141,19 +141,60 @@ public class ResourceMatrix {
      *  @Description: 计算效率
      */
     private double calculateEfficiency(List<Integer> sequence) {
-        //复制available向量
-        Integer[] work = Arrays.copyOf(available, available.length);
-        //占用率数组
-        Double[] used = new Double[m];
-        //
-        for (Integer i = 0; i < n; i++) {
-
-
+        // 计算每个资源的总量
+        Integer[] total = new Integer[m];
+        for (int j = 0; j < m; j++) {
+            total[j] = available[j]; // 试分配后的available
+            for (int i = 0; i < n; i++) {
+                total[j] += allocation[i][j];
+            }
         }
 
-        Double avgUsed = 0.0;
+        // 初始化work为试分配后的available的拷贝
+        Integer[] work = Arrays.copyOf(available, m);
 
-        return avgUsed;
+        double totalUtilization = 0.0;
+        int totalTime = 0;
+
+        // 计算总时间（所有进程的执行时间之和）
+        for (int process : sequence) {
+            totalTime += executeTime[process];
+        }
+
+        if (totalTime == 0) {
+            return 0.0; // 避免除零错误
+        }
+
+        // 遍历安全序列中的每个进程
+        for (int process : sequence) {
+            // 计算当前进程执行时的资源利用率
+            double processUtilization = 0.0;
+            for (int j = 0; j < m; j++) {
+                if (total[j] == 0) {
+                    continue; // 跳过无效资源
+                }
+                // 资源利用率为 (总资源 - 当前可用资源) / 总资源
+                double utilization = (double) (total[j] - work[j]) / total[j];
+                processUtilization += utilization;
+            }
+            // 平均各资源类型的利用率
+            processUtilization /= m;
+
+            // 累加时间加权的利用率
+            totalUtilization += processUtilization * executeTime[process];
+
+            // 更新可用资源：进程执行完成，释放资源
+            for (int j = 0; j < m; j++) {
+                work[j] += allocation[process][j];
+            }
+        }
+
+        double ans = totalUtilization / totalTime;
+
+        log.info("序列：{},效率{}",sequence,ans);
+
+        // 计算整体平均效率
+        return ans;
     }
 
     /*
@@ -180,49 +221,6 @@ public class ResourceMatrix {
         return allSafeSequences;
     }
 
-    /*
-     * @Description: 递归查找所有安全序列
-     */
-//    private void findSafeSequencesHelper(List<List<Integer>> allSafeSequences, List<Integer> currentSequence, boolean[] finish) {
-//        boolean foundProcess = false;
-//        for (int i = 0; i < n; i++) {
-//            if (!finish[i]) {
-//                boolean canAllocate = true;
-//                for (int j = 0; j < m; j++) {
-//                    if (need[i][j] > available[j]) {
-//                        canAllocate = false;
-//                        break;
-//                    }
-//                }
-//                if (canAllocate) {
-//                    // 假设分配资源
-//                    for (int j = 0; j < m; j++) {
-//                        available[j] -= need[i][j];
-//                        allocation[i][j] += need[i][j];
-//                        need[i][j] = 0;
-//                    }
-//                    finish[i] = true;
-//                    currentSequence.add(i);
-//
-//                    // 递归调用
-//                    findSafeSequencesHelper(allSafeSequences, currentSequence, finish);
-//
-//                    // 回溯，恢复资源矩阵
-//                    for (int j = 0; j < m; j++) {
-//                        available[j] += allocation[i][j];
-//                        need[i][j] = allocation[i][j];
-//                        allocation[i][j] = 0;
-//                    }
-//                    finish[i] = false;
-//                    currentSequence.remove(currentSequence.size() - 1);
-//                    foundProcess = true;
-//                }
-//            }
-//        }
-//        if (!foundProcess) {
-//            allSafeSequences.add(new ArrayList<>(currentSequence));
-//        }
-//    }
 
     private void findSafeSequencesHelper(List<List<Integer>> allSafeSequences, List<Integer> currentSequence, Integer[] work, boolean[] finish) {
         if (currentSequence.size() == n) { //递归完毕

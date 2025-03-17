@@ -62,7 +62,6 @@ public class ResourceMatrixController {
     public Result save(@RequestBody ResourceMatrix resourceMatrix) {
         resourceMatrixService.save(resourceMatrix);
         return Result.success();
-
     }
 
     /*

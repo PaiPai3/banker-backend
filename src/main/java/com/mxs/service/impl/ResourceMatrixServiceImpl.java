@@ -59,7 +59,7 @@ public class ResourceMatrixServiceImpl implements ResourceMatrixService {
         加载指定时间的矩阵
      */
     @Override
-    public ResourceMatrix findByTime(@RequestParam(value = "createTime") LocalDateTime createTime) {
+    public ResourceMatrix findByTime( LocalDateTime createTime) {
         ResourceTable resourceTable = resourceMatrixMapper.findByTime(createTime);
         return resourceTable.toResourceMatrix();
     }
